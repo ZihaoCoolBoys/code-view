@@ -3,6 +3,9 @@ package com.zihao.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
+import java.util.List;
+
 /**
  * @author zi hao
  * @version 1.0
@@ -35,5 +38,21 @@ public class JsonUtil {
         }
 
         return null;
+    }
+
+    /**
+     *
+     * @param date
+     * @param sourceFileNumber
+     * @return
+     */
+    public static String getJsonMapType(String date, int sourceFileNumber) {
+
+        if (null == date || sourceFileNumber <= 0) {
+            return null;
+        }
+
+        String mapFormat = "[\"" + date + "\"," + sourceFileNumber + "]";
+        return mapFormat;
     }
 }
