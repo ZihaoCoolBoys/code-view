@@ -8,6 +8,7 @@ import com.zihao.conf.ScanBeforeConfig;
 import com.zihao.count.Count;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -30,20 +31,50 @@ public class CodeScaning {
         if(ScanBeforeConfig.scanType.contains(substring)) {
             return new String(substring);
         }
+
         return null;
     }
 
-    //根据文件类型选择合适的扫描模板
+    /**
+     *
+     * @param fileType
+     * @param codeFile
+     */
+    private static void groupSourceFileByDate(String fileType,File codeFile) {
+
+        if (null == fileType || null == codeFile) {
+            return ;
+        }
+
+        /* 取出该源码文件的创建日期 */
+        String sourceKey = SourceFileDateUtil.formatSourceDate(codeFile.lastModified());
+        /* 取出缓存数据 */
+        Map<String,List<File>> countGroupByDate = RootScanResult.getCountGroupByDate();
+        if (countGroupByDate.containsKey(sourceKey)) {
+
+            countGroupByDate.get(sourceKey).add(codeFile);
+        } else {
+
+            List<File> sourceCount = new ArrayList<>();
+            sourceCount.add(codeFile);
+            countGroupByDate.put(sourceKey,sourceCount);
+        }
+    }
+
+    /* 根据文件类型选择合适的扫描模板 */
     public static void chooseTemplateScaning(String fileType,File codeFile) throws IOException {
 
         for(Map.Entry<String,Object>template : ScanBeforeConfig.countTemplate.entrySet()) {
+
             String tempTypeName = null;
             Count nowScanTemp = (Count)template.getValue();
             if(null != (tempTypeName = nowScanTemp.isCountType(fileType))) {
-                //统计之前查看缓存是否有结果对象
+                /* 统计之前查看缓存是否有结果对象 */
                 if(null == RootScanResult.getCountResult().get(tempTypeName)) {
                     RootScanResult.getCountResult().put(tempTypeName,new SourceCount());
                 }
+                /* 取当前源码文件进行日期分类,后期可能需要把该方法放到语言统计模板类中 */
+                groupSourceFileByDate(fileType,codeFile);
                 nowScanTemp.setFile(codeFile);
                 nowScanTemp.codeCount();
                 break;
@@ -96,7 +127,7 @@ public class CodeScaning {
     public static void beginScan() {
         System.out.println("正在搜索源码文件..........");
         try {
-            //TimeUnit.SECONDS.sleep(3);
+            TimeUnit.SECONDS.sleep(3);
         }catch (Exception e) {
             e.printStackTrace();
         }
