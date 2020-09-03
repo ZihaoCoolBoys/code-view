@@ -13,7 +13,8 @@ public enum ReplaceCountData {
 
     LANGUAGE_COUNT("${languageCount}"),
     METHOD_COUNT("${methodCount}"),
-    CODE_LINE_NUMBER("${codeLineNumber}");
+    CODE_LINE_NUMBER("${codeLineNumber}"),
+    SOURCE_CREATE_NUM("${sourceCreateNum}");
 
     private String replaceName;
 
