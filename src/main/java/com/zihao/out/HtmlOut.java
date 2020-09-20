@@ -18,16 +18,13 @@ import java.util.*;
  * <p>
  * 数据化图形的方式展示,选择网页进行数据的展示输出
  */
+
 public class HtmlOut extends OutCountResult {
 
     /* 项目代码的总行数 */
     private int lineNumber = 0;
-    /* 源文件创建的最大数量 */
-    private int sourceCreateNum = 0;
-
     /* 项目数据的简要信息展示 */
     private final List<Integer> languageCount = new ArrayList<>();
-
     /* 项目数据的代码信息展示 */
     private final List<Integer> methodCount = new ArrayList<>();
 
@@ -39,6 +36,14 @@ public class HtmlOut extends OutCountResult {
      */
     private final Map<String,String> sourceCreateNumber = new HashMap<>();
 
+    /**
+     * 存储根据日期时间分组的数据集
+     * key : 做为不同项目的区分
+     *
+     * value : Json数据 map 类型
+     */
+    private final Map<String,String> sourceWriteLine = new HashMap<>();
+
     /* 操作资源文件的 object */
     private final ResourceFile resourceFile = new ResourceFile();
 
@@ -46,7 +51,6 @@ public class HtmlOut extends OutCountResult {
      * 涉及到多文件输出,所以不用这里单文件输出的流
      */
     public HtmlOut() {
-
         super(null);
         initData();
     }
@@ -68,7 +72,6 @@ public class HtmlOut extends OutCountResult {
      * 源文件个数,if,for,while
      */
     public void chooseLanguageCount() {
-
         /* 遍历当前语言统计结果 */
         for (Map.Entry<String, Object> nowLanguageCount : RootScanResult.getCountResult().entrySet()) {
 
@@ -90,7 +93,6 @@ public class HtmlOut extends OutCountResult {
      * 函数个数,最长的方法行,平均方法行
      */
     public void chooseMethodCount() {
-
         /* 存储最长函数代码行数 */
         int maxLengthMethod = 0;
         /* 存储函数所有代码行数 */
@@ -122,8 +124,7 @@ public class HtmlOut extends OutCountResult {
      * @param sourceFile 扫描的结果集
      * @return 按日期排好序的日期格式
      */
-    private List<String> sourceFileCreatedNumberInit(Map<String,List<File>> sourceFile) {
-
+    private List<String> sourceFileSqrtByDate(Map<String,List<File>> sourceFile) {
         if (null == sourceFile || sourceFile.isEmpty()) {
             return null;
         }
@@ -152,16 +153,14 @@ public class HtmlOut extends OutCountResult {
      * 筛选数据,取出当天日期下所创建的源代码文件
      */
     public void chooseSourceFileCreatedNumber() {
-
         Map<String,List<File>> sourceFile = RootScanResult.getCountGroupByDate();
-        List<String> dates = sourceFileCreatedNumberInit(sourceFile);
+        List<String> dates = sourceFileSqrtByDate(sourceFile);
 
         /* 进行数据格式的整合 */
         String groupCreateResult = "[";
         for (String nowDate : dates) {
 
             int sourceFileSize = sourceFile.get(nowDate).size();
-            sourceCreateNum = (sourceCreateNum < sourceFileSize) ? sourceFileSize : sourceCreateNum;
 
             groupCreateResult += JsonUtil.getJsonMapType(nowDate,sourceFileSize);
             if (nowDate.equals(dates.get(dates.size() - 1))) {
@@ -177,9 +176,26 @@ public class HtmlOut extends OutCountResult {
         sourceCreateNumber.put(suffixName,groupCreateResult);
     }
 
+    /**
+     * 筛选数据,取出当天日期下所写的代码行数
+     */
+    public void chooseSourceFileWriteLine() {
+        Map<String,List<File>> sourceFile = RootScanResult.getCountGroupByDate();
+        List<String> dates = sourceFileSqrtByDate(sourceFile);
+
+        /* 进行数据格式的整合 */
+        String groupWriteResult = "[";
+        for (String nowDate : dates) {
+            /* 获取当天日期的所有源码集 */
+            List<File> files = sourceFile.get(nowDate);
+            for (File nowReadFile : files) {
+
+            }
+        }
+    }
+
     @Override
     public void print() {
-
         try {
             outCssFile();
             outEchartsFile();
@@ -195,7 +211,6 @@ public class HtmlOut extends OutCountResult {
      * 后期可能优化,更换其他的输出方式
      */
     private void outCssFile() {
-
         /* 资源数据文件写出 */
         resourceFile.resourceReadAndWrite("static/style.css", "count/style.css");
     }
@@ -205,7 +220,6 @@ public class HtmlOut extends OutCountResult {
      * 后期可能优化,更换其他的输出方式
      */
     private void outEchartsFile() {
-
         /* 资源数据文件写出 */
         resourceFile.resourceReadAndWrite("static/echarts.min.js", "count/echarts.min.js");
     }
@@ -215,7 +229,6 @@ public class HtmlOut extends OutCountResult {
      * 后期可能优化,更换其他的输出方式
      */
     private void outCountHtmlFile() {
-
         /* 替换html缓存的数据 并将资源文件写出 */
         resourceFile.replaceHtmlData(ReplaceCountData.CODE_LINE_NUMBER.getReplaceName(),lineNumber);
         try {
@@ -231,15 +244,18 @@ public class HtmlOut extends OutCountResult {
      * 该函数会进行动态数据替换,不在调用公共方法
      */
     private void outCodeViewFile() {
-
         /* 替换简要信息数据 */
         resourceFile.replaceCodeViewData(ReplaceCountData.LANGUAGE_COUNT.getReplaceName(),languageCount);
         /* 替换methodCount数据 */
         resourceFile.replaceCodeViewData(ReplaceCountData.METHOD_COUNT.getReplaceName(),methodCount);
         /* 替换sourceCreate数据 */
-        resourceFile.replaceCodeViewData(ReplaceCountData.SOURCE_CREATE_NUM.getReplaceName(),sourceCreateNumber.get("java"));
+        for (Map.Entry<String,String> groupResult : sourceCreateNumber.entrySet()) {
+
+            resourceFile.replaceCodeViewData(ReplaceCountData.SOURCE_CREATE_NUM.getReplaceName(),groupResult.getValue());
+        }
 
         try {
+
             resourceFile.writeResourceCaseFile(resourceFile.getCodeViewBuf(),"count/code-view.js");
         } catch (Exception e) {
             e.printStackTrace();

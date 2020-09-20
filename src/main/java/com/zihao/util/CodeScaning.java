@@ -21,12 +21,10 @@ public class CodeScaning {
 
     /**
      * 检测是否为需要扫描的文件类型
-     *
      * @param fileName
      * @return
      */
     public static String isScanType(String fileName) {
-
         String substring = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
         if(ScanBeforeConfig.scanType.contains(substring)) {
             return new String(substring);
@@ -36,12 +34,11 @@ public class CodeScaning {
     }
 
     /**
-     *
+     * 取得该文件的创建日期
      * @param fileType
      * @param codeFile
      */
     private static void groupSourceFileByDate(String fileType,File codeFile) {
-
         if (null == fileType || null == codeFile) {
             return ;
         }
@@ -61,8 +58,15 @@ public class CodeScaning {
         }
     }
 
-    /* 根据文件类型选择合适的扫描模板 */
-    public static void chooseTemplateScaning(String fileType,File codeFile) throws IOException {
+    /**
+     * 根据文件类型选择合适的扫描模板
+     * @param fileType 源码文件后缀
+     * @param codeFile 当前需要统计的源码文件
+     * @param result   结果集
+     * @throws IOException
+     */
+    private static void chooseTemplateScaning(String fileType, File codeFile,
+                                              Map<String,Object> result) throws IOException {
 
         for(Map.Entry<String,Object>template : ScanBeforeConfig.countTemplate.entrySet()) {
 
@@ -70,8 +74,8 @@ public class CodeScaning {
             Count nowScanTemp = (Count)template.getValue();
             if(null != (tempTypeName = nowScanTemp.isCountType(fileType))) {
                 /* 统计之前查看缓存是否有结果对象 */
-                if(null == RootScanResult.getCountResult().get(tempTypeName)) {
-                    RootScanResult.getCountResult().put(tempTypeName,new SourceCount());
+                if(null == result.get(tempTypeName)) {
+                    result.put(tempTypeName,new SourceCount());
                 }
                 /* 取当前源码文件进行日期分类,后期可能需要把该方法放到语言统计模板类中 */
                 groupSourceFileByDate(fileType,codeFile);
@@ -82,9 +86,12 @@ public class CodeScaning {
         }
     }
 
-    //进行统计
-    public static void countCode(File codeFile) {
-
+    /**
+     * 具体分析当前遍历的目录
+     * @param codeFile 当前遍历的源码文件
+     * @param result   结果集
+     */
+    public static void countCode(File codeFile,Map<String,Object> result) {
         String fileType = null;
         if ((fileType = isScanType(codeFile.getName())) == null)
             return; //不是需要统计的文件
@@ -92,30 +99,33 @@ public class CodeScaning {
         try {
             System.out.println("now Scaning file name is:" + codeFile.getName());
             Thread.sleep(new Random().nextInt(3) * 10);
-            chooseTemplateScaning(fileType,codeFile);
+            chooseTemplateScaning(fileType,codeFile,result);
         }catch (Exception e) {
             e.printStackTrace();
             System.out.println("文件异常");
         }
     }
 
-    //递归进行文件遍历
+    /**
+     * 文件开始遍历
+     * @param fileMsg 根目录
+     */
     public static void recursion(File fileMsg) {
-
         File[] files = fileMsg.listFiles();
 
         for (File nowFile : files) {
             if (nowFile.isDirectory()) {
                 recursion(nowFile);
             } else {
-                countCode(nowFile);
+                countCode(nowFile,RootScanResult.getCountResult());
             }
         }
     }
 
-    //判断跟目录
+    /**
+     * 判断目标项目是否存在
+     */
     public static void run() {
-
         File msgFile = new File(ScanBeforeConfig.rootPath);
         if (!msgFile.exists() || !msgFile.isDirectory()) {
             throw new RuntimeException("路径不存在");
@@ -123,7 +133,10 @@ public class CodeScaning {
         recursion(msgFile);
     }
 
-    //进行统计
+
+    /**
+     * 项目分析
+     */
     public static void beginScan() {
         System.out.println("正在搜索源码文件..........");
         try {

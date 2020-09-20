@@ -19,7 +19,6 @@ public enum ReplaceCountData {
     private String replaceName;
 
     ReplaceCountData(String argName) {
-
         this.replaceName = argName;
     }
 

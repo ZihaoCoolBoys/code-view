@@ -10,7 +10,6 @@ import lombok.ToString;
 @ToString
 @Data
 public class BaseCount {
-
     //扫描的全部代码总行数
     protected  Integer lineAllNumber = 0;
 }

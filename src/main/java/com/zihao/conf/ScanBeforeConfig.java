@@ -20,7 +20,6 @@ public class ScanBeforeConfig {
      * 加载统计所有语言的算法
      */
     public static void loadCountClass() {
-
         String packageName = "com.zihao.count.impl.";
         String path = ScanBeforeConfig.class.getClassLoader()
                 .getResource("com/zihao/count/impl").getPath();
@@ -43,7 +42,6 @@ public class ScanBeforeConfig {
      * 设置属性
      */
     public static void setProperties(Properties properties) {
-
         ScanBeforeConfig.rootPath = properties.getProperty("rootPath");
         String fileType = properties.getProperty("scanType");
         String[] split = fileType.split(",");
@@ -57,7 +55,6 @@ public class ScanBeforeConfig {
      * 载入配置文件
      */
     public static void initConfig() {
-
         loadCountClass();   //加载统计的模板
         Properties properties = new Properties();   //加载配置
         try{

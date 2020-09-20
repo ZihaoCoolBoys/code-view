@@ -11,6 +11,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  JAVA项目分析实例
+ */
+
 public class CountJava implements JavaCodeCount {
 
     private final static String COUNT_TEMPLATE_FLAG_JAVA = "java";
@@ -27,12 +31,10 @@ public class CountJava implements JavaCodeCount {
     private int rightJurisdictionCount = 0;
 
     public CountJava() {
-
     }
 
     @Override
     public void ifCount(String nowLine) {
-
         int liftPos = nowLine.indexOf("if");
         int rightPos = nowLine.lastIndexOf("(");
 
@@ -41,7 +43,6 @@ public class CountJava implements JavaCodeCount {
     }
 
     public void methodCountInit(String line) {
-
         List<MethodCount> methodCounts
                 = RootScanResult.getCountMethodResult().get(codeFile.getAbsolutePath());
         if ( null == methodCounts) {
@@ -63,7 +64,6 @@ public class CountJava implements JavaCodeCount {
      */
     @Override
     public void methodCount(String nowLine) {
-
         boolean hasJurisdiction = false;
         for (String jurisdiction : JAVA_JURISDICTION) {
 
@@ -85,7 +85,6 @@ public class CountJava implements JavaCodeCount {
      * @param line
      */
     public void countMethodRegx(String line,char data) {
-
         int leftCount = line.indexOf(data);
         while ( leftCount != -1) {
             //检测 " 常量问题
@@ -95,7 +94,6 @@ public class CountJava implements JavaCodeCount {
             //检测 ' 常量问题
             int singleLeftCount = line.indexOf("'");
             int singleRightCount = line.lastIndexOf("'");
-
             //是否有花括号常量
             if (doubleLeftCount < doubleRightCount && doubleLeftCount < leftCount && leftCount < doubleRightCount) {
 
@@ -117,7 +115,6 @@ public class CountJava implements JavaCodeCount {
      * 方法是否结束
      */
     public boolean isMethodOver() {
-
         boolean methodOver = leftJurisdictionCount == rightJurisdictionCount ? true : false;
         if (methodOver) {
             methodName = null;  //方法标识复位
@@ -144,7 +141,6 @@ public class CountJava implements JavaCodeCount {
      * 统计所扫描的每个方法的行数
      */
     public void methodCountLine(String line) {
-
         if (null == methodName || null == line) {
            return;
         }
@@ -158,7 +154,6 @@ public class CountJava implements JavaCodeCount {
 
     @Override
     public void forCount(String nowLine) {
-
         int liftPos = nowLine.indexOf("for");  //查找for语句
         int rightPos = nowLine.lastIndexOf("{");
 
@@ -168,7 +163,6 @@ public class CountJava implements JavaCodeCount {
 
     @Override
     public void whileCount(String nowLine) {
-
         int liftPos = nowLine.indexOf("while");  //查找for语句
         int rightPos = nowLine.lastIndexOf("{");
 
@@ -178,7 +172,6 @@ public class CountJava implements JavaCodeCount {
 
     @Override
     public Integer codeCount() throws IOException {
-
         javaResult = (SourceCount) RootScanResult.getCountResult().get(COUNT_TEMPLATE_FLAG_JAVA);
         if (null == javaResult)
             throw new IOException();
@@ -206,10 +199,10 @@ public class CountJava implements JavaCodeCount {
 
     @Override
     public String isCountType(String type) {
-
         if (COUNT_TEMPLATE_FLAG_JAVA.equals(type)) {
             return COUNT_TEMPLATE_FLAG_JAVA;
         }
+
         return null;
     }
 

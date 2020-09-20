@@ -21,7 +21,6 @@ public class ResourceFile {
     private  StringBuilder codeViewBuf;
 
     public ResourceFile() {
-
         initData();
     }
 
@@ -29,7 +28,6 @@ public class ResourceFile {
      * 将资源文件读入 builder 缓存中
      */
     public void initData() {
-
         try {
 
             htmlBuf = loadResourceCaseStr(rootPath + "static/count.html");
@@ -46,7 +44,6 @@ public class ResourceFile {
      * @param <T>   任意类型,公共方法,方便后期扩展
      */
     public <T> void replaceHtmlData(String replaceSource,T data) {
-
         /* 寻找需要替换的位置 */
         int replaceIndex = -1;
         /* 替换codeLineNumber数据 */
@@ -63,7 +60,6 @@ public class ResourceFile {
      * 数据动态替换,替换简单数据,替换
      */
     public <T> void replaceCodeViewData(String replaceSource,T jsonData) {
-
         /* 寻找需要替换的位置 */
         int replaceIndex = -1;
         /* 替换languageCount数据 */
@@ -82,7 +78,6 @@ public class ResourceFile {
      * @param data
      */
     public void replaceCodeViewData(String replaceSource,String data) {
-
         /* 寻找需要替换的位置 */
         int replaceIndex = -1;
         /* 替换languageCount数据 */
@@ -102,7 +97,6 @@ public class ResourceFile {
      * @param writePath
      */
     public void resourceReadAndWrite(String readPath, String writePath) {
-
         /* 打开需要载入的资源文件 */
         File resourcePath = new File(rootPath + readPath);
 
@@ -140,7 +134,6 @@ public class ResourceFile {
      * 创建结果集输出目录
      */
     private boolean createOutResultDir() {
-
         File file = new File("count");
 
         if (!file.exists()) {
@@ -156,7 +149,6 @@ public class ResourceFile {
      * 读入文本进行传出
      */
     public StringBuilder loadResourceCaseStr(String path) throws Exception {
-
         File codeViewFile = new File(path);
 
         /* 将需要动态更换数据的资源文件读取 */
@@ -196,7 +188,6 @@ public class ResourceFile {
      * @param builder
      */
     public void writeResourceCaseFile(StringBuilder builder,String path) throws Exception {
-
         if (null == builder) {
             throw new NullPointerException();
         }
@@ -232,7 +223,6 @@ public class ResourceFile {
      * @param out
      */
     public void closeResource(FileInputStream in, FileOutputStream out) {
-
         try {
 
             if (null != in)
@@ -253,14 +243,12 @@ public class ResourceFile {
      * @return
      */
     public String getFileSuffixName(File file) {
-
         if (null == file || !file.exists()) {
             return null;
         }
 
         String fileName = file.getName();
-        String suffixName = fileName.substring(fileName.lastIndexOf(".") + 1);
-        return suffixName;
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
     public StringBuilder getHtmlBuf() {

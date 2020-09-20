@@ -20,5 +20,4 @@ import lombok.ToString;
 public class MethodCount extends BaseCount {
 
     private String methodName;
-
 }

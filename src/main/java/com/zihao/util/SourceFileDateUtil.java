@@ -12,8 +12,7 @@ import java.text.SimpleDateFormat;
 
 public class SourceFileDateUtil {
 
-    private static final SimpleDateFormat simpleDateFormat
-            = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
      * 格式化日期格式
@@ -21,7 +20,6 @@ public class SourceFileDateUtil {
      * @return
      */
     public static String formatSourceDate(long sourceDate) {
-
         if (sourceDate <= 0) {
             return null;
         }
